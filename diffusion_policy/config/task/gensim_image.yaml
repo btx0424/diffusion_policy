@@ -1,0 +1,27 @@
+name: gensim_image
+
+dataset:
+  _target_: diffusion_policy.dataset.gensim_image_dataset.GensimImageDataset
+  horizon: 16
+  max_train_episodes: 90
+  pad_after: 7
+  pad_before: 1
+  seed: 42
+  val_ratio: 0.02
+  data_path: data/pusht/pusht_cchi_v7_replay.zarr
+  high_level: true
+
+shape_meta:
+  action:
+    shape: [14]
+  obs:
+    state:
+      shape: [12]
+      type: low_dim
+    image:
+      shape: [3, 180, 240]
+      type: rgb
+
+env_runner:
+  _target_: diffusion_policy.env_runner.gensim_image_runner.GensimImageRunner
+  task: block-insertion-easy

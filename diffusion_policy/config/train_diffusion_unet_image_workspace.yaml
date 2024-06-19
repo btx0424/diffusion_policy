@@ -9,9 +9,9 @@ task_name: ${task.name}
 shape_meta: ${task.shape_meta}
 exp_name: "default"
 
-horizon: 16
-n_obs_steps: 2
-n_action_steps: 8
+horizon: 2
+n_obs_steps: 1
+n_action_steps: 2
 n_latency_steps: 0
 dataset_obs_steps: ${n_obs_steps}
 past_action_visible: False
@@ -41,12 +41,12 @@ policy:
       name: resnet18
       weights: null
     resize_shape: null
-    crop_shape: [76, 76]
+    crop_shape: null # [160, 160]
     # constant center crop
-    random_crop: True
+    random_crop: False
     use_group_norm: True
     share_rgb_model: False
-    imagenet_norm: True
+    imagenet_norm: False
 
   horizon: ${horizon}
   n_action_steps: ${eval:'${n_action_steps}+${n_latency_steps}'}
@@ -55,7 +55,7 @@ policy:
   obs_as_global_cond: ${obs_as_global_cond}
   # crop_shape: null
   diffusion_step_embed_dim: 128
-  down_dims: [512, 1024, 2048]
+  down_dims: [512]
   kernel_size: 5
   n_groups: 8
   cond_predict_scale: True
@@ -110,7 +110,7 @@ training:
   # in epochs
   rollout_every: 50
   checkpoint_every: 50
-  val_every: 1
+  val_every: 5
   sample_every: 5
   # steps per epoch
   max_train_steps: null
