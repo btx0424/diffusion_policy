@@ -24,10 +24,8 @@ class GensimImageDataset(BaseImageDataset):
     ):
         
         super().__init__()
-        import sys
-        sys.path.append("/home/btx0424/gensim_ws/dreamerv3-torch")
-        from dataset.gensim import GensimDataset
-        data_path = "/home/btx0424/gensim_ws/GenSim/data/train"
+        from gen_diversity.dataset import GensimDataset, GENSIM_ROOT
+        data_path = os.path.join(GENSIM_ROOT, "data", "train")
 
         if high_level:
             seq_length = 2

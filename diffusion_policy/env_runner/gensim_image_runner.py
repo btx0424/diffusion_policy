@@ -2,6 +2,7 @@ import torch
 import os
 import numpy as np
 import imageio
+from termcolor import colored
 from typing import Dict
 from torchvision.transforms import Compose, ToTensor, Resize
 
@@ -19,30 +20,29 @@ class GensimImageRunner(BaseImageRunner):
         import os
         import sys
         from cliport import tasks
-        from cliport.environments.environment import Environment
 
-        sys.path.append("/home/btx0424/gensim_ws/dreamerv3-torch")
-        from dataset import GensimEnvironment
+        from gen_diversity.dataset import GenSimEnvironment, GENSIM_ROOT
 
-        self.env = GensimEnvironment(
+        task = "packing-boxes-pairs-seen-colors"
+        print(f"Create environment with task: {task}")
+        self.env = GenSimEnvironment(
             os.path.join(os.environ["GENSIM_ROOT"], "cliport", "environments", "assets"),
             disp=False,
             shared_memory=False,
             hz=240,
             record_cfg={"save_video": False}
         )
-        task = "packing-boxes-pairs-seen-colors"
         self.task: tasks.Task = tasks.names[task]()
         self.task.mode = "train"
 
         self.agent = self.task.oracle(self.env)
         self.transform = Compose([ToTensor(), Resize((240, 180))])
-        self.meas_score = 0
+        self.mean_score = 0
 
     @torch.no_grad()
     def run(self, policy: BaseImagePolicy) -> Dict:
-        # self.meas_score += 1
-        # return {"test_mean_score": self.meas_score}
+        self.mean_score += 1
+        return {"test_mean_score": self.mean_score}
         np.random.seed(0)
         self.env.set_task(self.task)
         obs, info = self.env.reset()
