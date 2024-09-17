@@ -13,7 +13,7 @@ from diffusion_policy.common.normalize_util import get_image_range_normalizer
 
 class GensimImageDataset(BaseImageDataset):
     def __init__(self,
-        data_path="", 
+        skill="", 
         horizon=1,
         pad_before=0,
         pad_after=0,
@@ -25,7 +25,7 @@ class GensimImageDataset(BaseImageDataset):
         
         super().__init__()
         from gen_diversity.dataset import GensimDataset, GENSIM_ROOT
-        data_path = os.path.join(GENSIM_ROOT, "data", "train")
+        data_path = os.path.join(GENSIM_ROOT, "data", "train", skill)
 
         if high_level:
             seq_length = 2
@@ -57,19 +57,6 @@ class GensimImageDataset(BaseImageDataset):
 
     def __len__(self) -> int:
         return len(self._dataset)
-
-    def _sample_to_data(self, sample):
-        agent_pos = sample['state'][:,:2].astype(np.float32) # (agent_posx2, block_posex3)
-        image = np.moveaxis(sample['img'],-1,1)/255
-
-        data = {
-            'obs': {
-                'image': image, # T, 3, 96, 96
-                'agent_pos': agent_pos, # T, 2
-            },
-            'action': sample['action'].astype(np.float32) # T, 2
-        }
-        return data
     
     def __getitem__(self, idx: int) -> Dict[str, torch.Tensor]:
         data = self._dataset[idx]
